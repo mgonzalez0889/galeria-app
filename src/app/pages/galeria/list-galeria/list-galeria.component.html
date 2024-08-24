@@ -1,1 +1,14 @@
-<p>list-galeria works!</p>
+
+
+<div class="image-list">
+  <ng-container *ngIf="galeria$ | async as galerias">
+    <ng-container *ngFor="let galeria of galerias">
+      <div class="image-item">
+        <figure>
+          <img [src]="galeria.thumbnailUrl" [alt]="galeria.id">
+        </figure>
+        <p class="list-title">{{galeria.title}}</p>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
