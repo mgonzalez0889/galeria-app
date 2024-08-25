@@ -1,7 +1,13 @@
-<h2 class="title">App galeria</h2>
+<h2 class="title">Bienvenido a tu App galeria</h2>
+
+<div class="input-search">
+  <label>Buscar por titulo</label>
+  <input type="text" placeholder="Ingrese titulo" (input)="onSearch($event)">
+</div>
 
 <app-list-galeria
-
+  [data$]="galeria$"
+  [searchTerm]="searchTerm"
 >
 </app-list-galeria>
 

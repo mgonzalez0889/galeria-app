@@ -1,1 +1,14 @@
-<p>modal-galeria works!</p>
+<div class="card">
+  <h4 class="modal-title text-center p-sm-2" id="modal-basic-title">{{item.title | titlecase}}</h4>
+  <hr>
+  <div class="card-body">
+    <div class="d-flex" *ngIf="item.url.length">
+      <img [src]="item.url" [alt]="item.id" class="m-auto">
+    </div>
+  </div>
+</div>
+
+
+
+
+
