@@ -12,7 +12,7 @@ export class GaleriaService {
   private URL = 'https://jsonplaceholder.typicode.com/'
 
 
-  listadoGaleria (): Observable<InterfaceGaleria[]> {
-    return this._htpp.get<InterfaceGaleria[]>(this.URL + 'photos?albumId=1');
+  listadoGaleria (page: number): Observable<InterfaceGaleria[]> {
+    return this._htpp.get<InterfaceGaleria[]>(this.URL + `photos?albumId=${page}`);
   }
 }

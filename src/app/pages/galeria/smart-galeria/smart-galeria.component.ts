@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ListGaleriaComponent} from "../list-galeria/list-galeria.component";
 import {GaleriaService} from "../../../services/galeria.service";
-import {Observable} from "rxjs";
+import {Observable, Subject, takeUntil} from "rxjs";
 import {InterfaceGaleria} from "../../../interfaces/interface-galeria";
 
 @Component({
@@ -15,11 +15,19 @@ import {InterfaceGaleria} from "../../../interfaces/interface-galeria";
 })
 export class SmartGaleriaComponent implements  OnInit{
   public galeriaService = inject(GaleriaService);
+  public increment: number = 1;
 
-  public galeria$: Observable<InterfaceGaleria[]> = new Observable();
+  public galeria: InterfaceGaleria[] = [];
 
   ngOnInit(): void {
-    this.galeria$ = this.galeriaService.listadoGaleria();
+    this.getAllData();
+  }
+
+  getAllData() {
+    const page: number = 1;
+    this.galeriaService.listadoGaleria(page).subscribe((galeria) => {
+      this.galeria = galeria;
+    })
   }
 
   searchTerm: string = '';
@@ -27,6 +35,23 @@ export class SmartGaleriaComponent implements  OnInit{
   onSearch(event: Event) {
     const target = event.target as HTMLInputElement;
     this.searchTerm = target.value.trim().toLowerCase();
+  }
+
+  onIncrement() {
+    this.increment = this.increment + 1;
+    this.galeriaService.listadoGaleria(this.increment).subscribe((galeria) => {
+      this.galeria = galeria;
+    })
+  }
+
+  onDecrement() {
+    if (this.increment > 1) {
+      this.increment = this.increment - 1;
+      this.galeriaService.listadoGaleria(this.increment).subscribe((galeria) => {
+        this.galeria = galeria;
+      })
+    }
+
   }
 
 

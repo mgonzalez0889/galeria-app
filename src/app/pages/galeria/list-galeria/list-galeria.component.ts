@@ -1,4 +1,4 @@
-import {Component, inject, Input, OnInit, TemplateRef} from '@angular/core';
+import {Component, inject, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, combineLatest, delay, filter, finalize, map, Observable, startWith, tap} from "rxjs";
 import {InterfaceGaleria} from "../../../interfaces/interface-galeria";
@@ -6,6 +6,7 @@ import {GaleriaService} from "../../../services/galeria.service";
 import {AsyncPipe, NgForOf, NgIf, SlicePipe} from "@angular/common";
 import {ModalGaleriaComponent} from "../modal-galeria/modal-galeria.component";
 import {ModalDismissReasons, NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgxPaginationModule} from "ngx-pagination";
 
 @Component({
   selector: 'app-list-galeria',
@@ -15,47 +16,35 @@ import {ModalDismissReasons, NgbModal} from "@ng-bootstrap/ng-bootstrap";
     AsyncPipe,
     NgForOf,
     SlicePipe,
-    ModalGaleriaComponent
+    ModalGaleriaComponent,
+    NgxPaginationModule
   ],
   templateUrl: './list-galeria.component.html',
   styleUrl: './list-galeria.component.scss'
 })
-export class ListGaleriaComponent implements  OnInit{
+export class ListGaleriaComponent implements  OnInit, OnDestroy, OnChanges{
   private modalService = inject(NgbModal);
   closeResult = '';
   public itemSelected!: InterfaceGaleria
   loading = false;
 
-  @Input() data$: Observable<InterfaceGaleria[]> = new Observable();
-  filteredData$!: Observable<InterfaceGaleria[]>;
-  private searchTermSubject = new BehaviorSubject<string>('');
+  @Input() data: InterfaceGaleria[] = [];
+  @Input() searchTerm: string = '';
+  filteredData: InterfaceGaleria[] = [];
 
-  @Input() set searchTerm(value: string) {
-    this.searchTermSubject.next(value.toLowerCase());
-  }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-    this.filteredData$ = combineLatest([this.data$, this.searchTermSubject.pipe(startWith(''))])
-      .pipe(
-        tap(() => this.loading = true),
-        map(([galerias, searchTerm]) => {
-          if (!searchTerm) {
-            setTimeout(() => {
-              this.loading = false
-            }, 1000)
-            return galerias;
-          }
-
-          const filteredGalerias = galerias.filter(galeria =>
-            galeria.title.toLowerCase().includes(searchTerm)
-          );
-          setTimeout(() => {
-            this.loading = false;
-          }, 1000)
-
-          return filteredGalerias;
-        })
-      );
+  filterData() {
+    this.loading = true;
+    const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
+    this.filteredData = this.data.filter((item) => {
+      this.loading = true;
+        return item.title.toLowerCase().includes(lowerCaseSearchTerm)
+      }
+    );
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000)
   }
 
 
@@ -80,6 +69,16 @@ export class ListGaleriaComponent implements  OnInit{
         return 'by clicking on a backdrop';
       default:
         return `with: ${reason}`;
+    }
+  }
+
+  ngOnDestroy() {
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] || changes['searchTerm']) {
+      this.filterData();
     }
   }
 

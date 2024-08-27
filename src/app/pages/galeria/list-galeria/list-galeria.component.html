@@ -2,9 +2,9 @@
   <div class="spinner"></div>
 </div>
 
+
 <div class="image-list">
-  <ng-container *ngIf="filteredData$ | async as galerias">
-    <ng-container *ngFor="let galeria of galerias">
+    <ng-container *ngFor="let galeria of filteredData">
       <div class="image-item" [style]="'cursor: pointer'">
         <figure>
           <img [src]="galeria.thumbnailUrl" [alt]="galeria.id" (click)="open(content, galeria)">
@@ -12,7 +12,6 @@
         <p class="list-title">{{galeria.title | slice: 0 : 20 }}</p>
       </div>
     </ng-container>
-  </ng-container>
 </div>
 
 <ng-template #content let-modal>
